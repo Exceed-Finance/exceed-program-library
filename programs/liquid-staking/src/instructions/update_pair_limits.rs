@@ -59,7 +59,8 @@ pub fn handler(ctx: Context<UpdatePairLimits>, params: UpdatePairLimitsParams) -
     }
 
     if let Some(swap_fee_bps) = params.swap_fee_bps {
-        require!(swap_fee_bps <= 2500, StakingError::InvalidFeePercentage);
+        // swap fee cap raised to 5000 bps (2026-10-07): pikSOL -> exSOL at 50%
+        require!(swap_fee_bps <= 5000, StakingError::InvalidFeePercentage);
         pair.swap_fee_bps = swap_fee_bps;
     }
 

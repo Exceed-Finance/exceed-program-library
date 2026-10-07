@@ -269,7 +269,10 @@ impl Pair {
     }
 
     pub fn calculate_fee(&self, amount: u64, fee_bps: u16) -> Result<u64> {
-        if fee_bps > 2500 {
+        // Cap raised 2500 -> 5000 bps (2026-10-07) so a 50% swap haircut can be
+        // expressed on one side (pikSOL -> exSOL conversion). Stake/withdraw fees
+        // keep their own 2500 bps caps in the instruction handlers.
+        if fee_bps > 5000 {
             return Err(StakingError::InvalidFeePercentage.into());
         }
 
@@ -385,6 +388,19 @@ mod tests {
             )
             .unwrap();
         assert!(base_amount > lst_quantity); // Should get more base tokens due to yield
+    }
+
+    #[test]
+    fn test_calculate_fee_cap_5000() {
+        let pair = create_test_pair();
+        // 50% is now a legal fee (one-sided pikSOL -> exSOL haircut)
+        assert_eq!(pair.calculate_fee(1_000_000, 5000).unwrap(), 500_000);
+        // the previous cap still works
+        assert_eq!(pair.calculate_fee(1_000_000, 2500).unwrap(), 250_000);
+        // one basis point above the new cap is rejected
+        assert!(pair.calculate_fee(1_000_000, 5001).is_err());
+        // zero fee unchanged
+        assert_eq!(pair.calculate_fee(1_000_000, 0).unwrap(), 0);
     }
 
     #[test]

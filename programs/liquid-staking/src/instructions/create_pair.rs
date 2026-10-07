@@ -189,7 +189,7 @@ pub fn handler(ctx: Context<CreatePair>, symbol: &str, params: &CreatePairParams
         StakingError::InvalidFeePercentage
     );
     require!(
-        params.swap_fee_bps <= 2500,
+        params.swap_fee_bps <= 5000, // raised from 2500 (2026-10-07), see pair.rs calculate_fee
         StakingError::InvalidFeePercentage
     );
     require!(

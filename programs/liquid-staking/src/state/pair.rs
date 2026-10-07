@@ -379,7 +379,7 @@ mod tests {
 
     #[test]
     fn test_calculate_fee_cap_5000() {
-        let pair = create_test_pair();
+        let pair = default_pair();
         // 50% is now a legal fee (one-sided pikSOL -> exSOL haircut)
         assert_eq!(pair.calculate_fee(1_000_000, 5000).unwrap(), 500_000);
         // the previous cap still works

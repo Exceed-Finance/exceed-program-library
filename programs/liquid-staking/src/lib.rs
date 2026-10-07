@@ -10,7 +10,7 @@ pub mod state;
 pub mod types;
 pub mod u64x64_math;
 
-declare_id!("par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV");
+declare_id!("GTmavJc15q4TowiFmdzFU7VFsfkfahxiMXT9xfS9eeCo"); // DEVNET fee-cap test
 
 security_txt! {
     name: "liquid_staking",

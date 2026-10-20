@@ -1,0 +1,24 @@
+name: Export verification PDA transaction
+
+# Check-only: prints an unsigned base58 transaction that writes the OtterSec
+# verification record for par1ty..., to be imported into Squads and signed by
+# the program upgrade authority (Squads vault 87VfCnQ4...). Signs nothing,
+# deploys nothing.
+on:
+  push:
+    branches: [feature/verifiable-build-check]
+  workflow_dispatch:
+
+jobs:
+  export-pda-tx:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install solana-verify
+        run: cargo install solana-verify --locked
+
+      - name: Help (for the record)
+        run: solana-verify export-pda-tx --help
+
+      - name: Export PDA transaction
+        run: |
+          solana-verify -um export-pda-tx https://github.com/Exceed-Finance/exceed-program-library             --program-id par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV             --uploader 87VfCnQ4d7XuZwriJAK7yADmqzrJQBx9FYMqCwdue5kv             --encoding base58             --compute-unit-price 0             --commit-hash 5e66e8b08ea59db35ac9da72116912a8eac02018             --library-name liquid_staking             --base-image solanafoundation/solana-verifiable-build:2.1.14

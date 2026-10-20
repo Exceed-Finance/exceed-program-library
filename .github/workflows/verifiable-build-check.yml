@@ -1,0 +1,35 @@
+name: Verifiable build check
+
+# Check-only: rebuilds the deployed source with solana-verify (the OtterSec
+# reproducible-build tool) and prints the executable hash, to compare with the
+# on-chain program hash. Deploys nothing.
+on:
+  push:
+    branches: [feature/verifiable-build-check]
+  workflow_dispatch:
+
+jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["auto", "solanafoundation/solana-verifiable-build:2.1.14"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install solana-verify
+        run: cargo install solana-verify --locked
+
+      - name: Verifiable build
+        run: |
+          if [ "${{ matrix.image }}" = "auto" ]; then
+            solana-verify build --library-name liquid_staking
+          else
+            solana-verify build --library-name liquid_staking --base-image "${{ matrix.image }}"
+          fi
+
+      - name: Executable hash
+        run: |
+          echo "built:    $(solana-verify get-executable-hash target/deploy/liquid_staking.so)"
+          echo "on-chain: 8593ef6d909da416ed0a737f0d23cc9b4bdd5a53cc5dabfd308f3cc0e91e9470"

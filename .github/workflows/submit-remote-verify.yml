@@ -1,0 +1,27 @@
+name: Submit OtterSec remote verification
+
+# Asks OtterSec's verification service to rebuild par1ty... from the parameters
+# in the on-chain verification record (uploader = Squads vault 87VfCnQ4...) and
+# mark the program verified. Signs nothing, deploys nothing.
+on:
+  push:
+    branches: [feature/verifiable-build-check]
+    paths: ['.github/workflows/submit-remote-verify.yml']
+  workflow_dispatch:
+
+jobs:
+  submit-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install solana-verify
+        run: cargo install solana-verify --locked
+
+      - name: Submit remote job
+        run: |
+          solana-verify -um remote submit-job \
+            --program-id par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV \
+            --uploader 87VfCnQ4d7XuZwriJAK7yADmqzrJQBx9FYMqCwdue5kv
+
+      - name: Verification status
+        if: always()
+        run: curl -s https://verify.osec.io/status/par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV
